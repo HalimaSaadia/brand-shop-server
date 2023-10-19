@@ -24,16 +24,46 @@ const client = new MongoClient(uri, {
   },
 });
 
+const faqs = [
+  {
+    question: "What is your return policy for defective items?",
+    answer:
+      "Contact our customer service within 30 days for a replacement or refund.",
+  },
+  {
+    question: "How do I track my order?",
+    answer:
+      "You'll receive an email with the tracking number. It's also in your account.",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer: "We accept credit/debit cards, PayPal, and other secure options.",
+  },
+  {
+    question: "Can I change or cancel my order after placing it?",
+    answer:
+      "Orders are processed immediately, so changes or cancellations aren't possible.",
+  },
+
+  {
+    question: "What is the warranty on your products?",
+    answer:
+      "Most products have a 1-year manufacturer's warranty. Check the product listing for details.",
+  },
+ 
+];
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
     const productsCollection = client.db("brandShopDB").collection("products");
-    const sliderCollection = client
-      .db("brandShopDB")
-      .collection("brand-slider");
+    const sliderCollection = client.db("brandShopDB").collection("brand-slider");
     const cart = client.db("brandShopDB").collection("cart");
+    const faq = client.db("brandShopDB").collection("faq");
+
+ 
 
     // product related route
     app.get("/products/:brand", async (req, res) => {
@@ -65,11 +95,17 @@ async function run() {
       const filter = { _id: new ObjectId(id) };
       const product = {
         $set: {
-          photo, name, brandName, type, price, description, rating
-        }
-      }
+          photo,
+          name,
+          brandName,
+          type,
+          price,
+          description,
+          rating,
+        },
+      };
       const result = await productsCollection.updateOne(filter, product);
-      res.send(result)
+      res.send(result);
       console.log(updatedProduct);
     });
 
@@ -80,12 +116,12 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/cart/:id", async(req, res) => {
+    app.delete("/cart/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
-      const result = await cart.deleteOne(query)
-      res.send(result)
-    })
+      const query = { _id: new ObjectId(id) };
+      const result = await cart.deleteOne(query);
+      res.send(result);
+    });
 
     app.post("/cart", async (req, res) => {
       const cartItem = req.body;
@@ -93,6 +129,12 @@ async function run() {
       res.send(result);
     });
 
+    // faq related Route
+    app.get("/faq", async (req, res) => {
+      const cursor = faq.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
 
     // Send a ping to confirm a successful connection
