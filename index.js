@@ -63,6 +63,9 @@ async function run() {
     const cart = client.db("brandShopDB").collection("cart");
     const faq = client.db("brandShopDB").collection("faq");
 
+
+
+
  
 
     // product related route
@@ -109,6 +112,14 @@ async function run() {
       console.log(updatedProduct);
     });
 
+    // slider related route
+     app.get("/slider/:brand", async (req, res) => {
+      const brand= req.params.brand;
+      const query = { brand:  brand};
+      const result = await sliderCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // cart related route
     app.get("/cart", async (req, res) => {
       const cursor = cart.find();
@@ -128,6 +139,7 @@ async function run() {
       const result = await cart.insertOne(cartItem);
       res.send(result);
     });
+
 
     // faq related Route
     app.get("/faq", async (req, res) => {
