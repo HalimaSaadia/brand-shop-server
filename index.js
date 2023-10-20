@@ -28,7 +28,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     app.get("/", (req, res) => {
       res.send("Server Is Running");
@@ -68,7 +68,7 @@ async function run() {
 
     app.patch("/product/:id", async (req, res) => {
       const updatedProduct = req.body;
-      const { photo, name, brandName, type, price, description, rating } =
+      const { photo, name, brandName, type, price,  rating } =
         updatedProduct;
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
@@ -79,13 +79,12 @@ async function run() {
           brandName,
           type,
           price,
-          description,
           rating,
         },
       };
       const result = await productsCollection.updateOne(filter, product);
       res.send(result);
-      console.log(updatedProduct);
+
     });
 
     // slider related route
